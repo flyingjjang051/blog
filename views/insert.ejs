@@ -56,6 +56,30 @@
 <script>
   const date = document.querySelector("#date");
   const picker = new Lightpick({ field: date, format: "YYYY-MM-DD" });
-  $("#desc").summernote({ height: 400 });
+  $("#desc").summernote({
+    height: 400,
+    callbacks: {
+      onImageUpload: function (files) {
+        sendImageCloudinary(files[0], this);
+      },
+    },
+  });
+  function sendImageCloudinary(file, editor) {
+    const sendImgData = new FormData(); // form 없이 post로 데이터 날리는 방법...
+    // 서버로 ajax 통해서 데이터를 보내서 server에서 cloudinary에 이미지 업로드를 하고
+    // 업로드가 되고 나면 올라간 이미지의 절대 경로를 결과값으로 받아서 이미지 src로 대체...
+    sendImgData.append("summerNoteImg", file); // <input type="file" name="summerNoteImg" id="image" />
+    $.ajax({
+      url: "/summerNoteInsertImg",
+      data: sendImgData,
+      method: "POST",
+      contentType: false, // application/x-www-form-urlencoded
+      processData: false, //  querystring 방식으로 가는 걸 막기  (마끼...)
+      enctype: "multipart/form-data",
+    }).done((response) => {
+      //console.log(response.cloudinaryImgSrc);
+      $(editor).summernote("editor.insertImage", response.cloudinaryImgSrc);
+    });
+  }
 </script>
 <%- include("include/footer"); %>

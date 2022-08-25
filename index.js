@@ -44,7 +44,6 @@ app.get("/", (req, res) => {
 app.get("/insert", (req, res) => {
   res.render("insert", { title: "글쓰기" });
 });
-
 app.post("/register", fileUpload.single("image"), (req, res) => {
   const title = req.body.title;
   const date = req.body.date;
@@ -72,6 +71,20 @@ app.get("/list", (req, res) => {
       console.log(result);
       res.render("list", { title: "list", list: result });
     });
+});
+app.get("/detail/:title", (req, res) => {
+  const title = req.params.title;
+  db.collection("blog").findOne({ title: title }, (err, result) => {
+    if (result) {
+      res.render("detail", { title: "detail", data: result });
+    }
+  });
+});
+
+app.post("/summerNoteInsertImg", fileUpload.single("summerNoteImg"), (req, res) => {
+  cloudinary.uploader.upload(req.file.path, (result) => {
+    res.json({ cloudinaryImgSrc: result.url });
+  });
 });
 
 app.listen(PORT, () => {

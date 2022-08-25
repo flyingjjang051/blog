@@ -151,6 +151,37 @@ a {
   border-radius: 5px;
 }
 
+.blogList {
+  display: flex;
+  flex-wrap: wrap;
+}
+.blogList li {
+  width: 24%;
+  margin: 0.5%;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+}
+.blogList li .img img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+.blogList li .txt {
+  padding: 0 20px;
+}
+.blogList li .blogTitle {
+  font-size: 18px;
+  margin-top: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.blogList li .date {
+  text-align: right;
+  margin-top: 20px;
+}
+
 @media all and (max-width: 1200px) {
   #contents {
     width: 100%;
