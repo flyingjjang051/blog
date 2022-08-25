@@ -4,7 +4,15 @@ const dotenv = require("dotenv").config();
 const path = require("path");
 const multer = require("multer");
 const cloudinary = require("cloudinary");
-const db = require("./routes/db");
+const MongoClient = require("mongodb").MongoClient;
+const htmlParser = require("node-html-parser");
+let db = null;
+MongoClient.connect(process.env.MONGO_URL, { useUnifiedTopology: true }, (err, client) => {
+  if (err) {
+    console.log(err);
+  }
+  db = client.db("crudapp");
+});
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false })); // post에서 보낸 데이터 req.body로 받을려면 있어야함
@@ -14,18 +22,18 @@ app.set("port", process.env.PORT || 8099);
 const PORT = app.get("port");
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_COUND_NAME,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const storage = multer.diskStorage({
-  destination: (req, file, done) => {
-    done(null, path.join(__dirname, "/upload"));
-  },
-  filename: (req, file, done) => {
-    done(null, file.originalname);
-  },
+  // destination: (req, file, done) => {
+  //   done(null, path.join(__dirname, "/upload"));
+  // },
+  // filename: (req, file, done) => {
+  //   done(null, file.originalname);
+  // },
 });
 
 const fileUpload = multer({ storage: storage });
@@ -35,6 +43,35 @@ app.get("/", (req, res) => {
 });
 app.get("/insert", (req, res) => {
   res.render("insert", { title: "글쓰기" });
+});
+
+app.post("/register", fileUpload.single("image"), (req, res) => {
+  const title = req.body.title;
+  const date = req.body.date;
+  const category = Array.isArray(req.body.category) ? req.body.category.join(" ") : req.body.category;
+  const desc = req.body.desc;
+  const point = req.body.point;
+  const image = req.file.filename;
+  cloudinary.uploader.upload(req.file.path, (result) => {
+    db.collection("blog").insertOne({
+      title: title,
+      date: date,
+      category: category,
+      desc: desc,
+      point: point,
+      image: result.url,
+    });
+    res.send("잘 들어갔습니다.");
+  });
+});
+
+app.get("/list", (req, res) => {
+  db.collection("blog")
+    .find()
+    .toArray((err, result) => {
+      console.log(result);
+      res.render("list", { title: "list", list: result });
+    });
 });
 
 app.listen(PORT, () => {

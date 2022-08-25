@@ -52,6 +52,7 @@ a {
 .formBox .inputBox label {
   display: flex;
   align-items: center;
+  margin-bottom: 0;
 }
 .formBox .inputBox label .label {
   width: 150px;
@@ -73,11 +74,13 @@ a {
   padding: 10px;
   border: 1px solid #ccc;
 }
-.formBox .inputBox label #userID,
-.formBox .inputBox label #userPW,
-.formBox .inputBox label #userName,
-.formBox .inputBox label #userEmail {
+.formBox .inputBox label #title,
+.formBox .inputBox label #date,
+.formBox .inputBox label #desc {
   flex-grow: 1;
+}
+.formBox .inputBox label .note-frame {
+  width: 100%;
 }
 .formBox .inputBox label #userJob {
   width: 200px;
