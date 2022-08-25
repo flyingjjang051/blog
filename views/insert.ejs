@@ -76,8 +76,8 @@
       contentType: false, // application/x-www-form-urlencoded
       processData: false, //  querystring 방식으로 가는 걸 막기  (마끼...)
       enctype: "multipart/form-data",
+      cache: false,
     }).done((response) => {
-      //console.log(response.cloudinaryImgSrc);
       $(editor).summernote("editor.insertImage", response.cloudinaryImgSrc);
     });
   }

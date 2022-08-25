@@ -5,7 +5,6 @@ const path = require("path");
 const multer = require("multer");
 const cloudinary = require("cloudinary");
 const MongoClient = require("mongodb").MongoClient;
-const htmlParser = require("node-html-parser");
 let db = null;
 MongoClient.connect(process.env.MONGO_URL, { useUnifiedTopology: true }, (err, client) => {
   if (err) {
@@ -36,7 +35,8 @@ const storage = multer.diskStorage({
   // },
 });
 
-const fileUpload = multer({ storage: storage });
+const fileUpload01 = multer({ storage: storage });
+const fileUpload02 = multer({ storage: storage });
 
 app.get("/", (req, res) => {
   res.render("index", { title: "우당탕탕 우영우..." });
@@ -44,13 +44,15 @@ app.get("/", (req, res) => {
 app.get("/insert", (req, res) => {
   res.render("insert", { title: "글쓰기" });
 });
-app.post("/register", fileUpload.single("image"), (req, res) => {
+app.post("/register", fileUpload01.single("image"), (req, res) => {
   const title = req.body.title;
   const date = req.body.date;
   const category = Array.isArray(req.body.category) ? req.body.category.join(" ") : req.body.category;
-  const desc = req.body.desc;
+  //const desc = req.body.desc;
+  const desc = `<p><img style="width: 644px;" src="http://res.cloudinary.com/dyc7w2mfb/image/upload/v1661418079/bbpbeoabzcrrlrgj5imq.png"><br></p>`;
   const point = req.body.point;
   const image = req.file.filename;
+  console.log(req);
   cloudinary.uploader.upload(req.file.path, (result) => {
     db.collection("blog").insertOne({
       title: title,
@@ -68,7 +70,6 @@ app.get("/list", (req, res) => {
   db.collection("blog")
     .find()
     .toArray((err, result) => {
-      console.log(result);
       res.render("list", { title: "list", list: result });
     });
 });
@@ -80,8 +81,8 @@ app.get("/detail/:title", (req, res) => {
     }
   });
 });
-
-app.post("/summerNoteInsertImg", fileUpload.single("summerNoteImg"), (req, res) => {
+app.post("/summerNoteInsertImg", fileUpload02.single("summerNoteImg"), (req, res) => {
+  console.log(req);
   cloudinary.uploader.upload(req.file.path, (result) => {
     res.json({ cloudinaryImgSrc: result.url });
   });
