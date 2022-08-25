@@ -1,0 +1,16 @@
+<%- include("include/header"); %>
+<main id="main">
+  <div id="contents">
+    <h2 class="title"><%= title %></h2>
+    <div>
+      <ul>
+        <li><span>제목:</span><%= result.title %></li>
+        <li><span>개봉일:</span><%= result.date %></li>
+        <li><span>장르:</span><%= result.genre %></li>
+        <li><span>평점:</span><%= result.point %></li>
+        <li><span>포스터:</span><img src="<%= result.poster %>" alt="<%= result.title %>" /></li>
+      </ul>
+    </div>
+  </div>
+</main>
+<%- include("include/footer"); %>
